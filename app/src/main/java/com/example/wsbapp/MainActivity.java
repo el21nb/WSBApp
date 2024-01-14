@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private void DoStuff() {
         Log.d("MyMain", "hello");
          makeBusStops();
-        // makeChildren();
+         makeChildren();
 
 
         viewPassengersButton = findViewById(R.id.button);
@@ -53,19 +53,34 @@ public class MainActivity extends AppCompatActivity {
         String[] name = {"Bournebridge Lane", "Brentwood Police Station", "Palmerston Road", "Traps Hill"};
         String[] address = {"Bournebridge Lane/High Street Junction Sk6 8YY", "Brentwood Rd/High Street Junction Sk6 8YY", "Palmerston Road/High Street Junction Sk6 8YY", "Traps Hill/High Street Junction Sk6 8YY"};
         for (int i = 0; i < 4; i++) {
-            provider.addBusStop(name[i], address[i]);
+            String stpId = "ST" + String.format("%05d", i + 1);
+            provider.addBusStop(stpId, name[i], address[i]);
         }
 
     }
 
     public void makeChildren () {
         ChildProvider provider = new ChildProvider();
+        BusStopChildProvider busStopChildProvider = new BusStopChildProvider();
         String[] firstname = {"John-James", "Jack-James", "Jannet-James", "Jane-James"};
         String[] lastName = {"Jones", "Johnson", "Jenkins", "Jordan"};
         String[] contactName = {"John (Father)", "Jack (Father)", "Jannet (Mother)", "Jane  (Other Mother)"};
         String[] contactDetail = {"0151 123456", "Johnson@gmail.com", "07770876987", "07776344567"};
         for (int i = 0; i < 4; i++) {
-            provider.addChild(firstname[i], lastName[i],contactName[i],contactDetail[i]);
+            String childId = "CH" + String.format("%05d", i + 1);
+            String bSCId = String.format("%05d", i+1);
+            //create child in database
+            provider.addChild(childId, firstname[i], lastName[i], contactName[i], contactDetail[i]);
+            //assign child to a bus stop
+            if(i==0){
+                busStopChildProvider.AddToBusStopChild(bSCId,"ST00001", childId);
+            }
+            else if(i==1){
+                busStopChildProvider.AddToBusStopChild(bSCId,"ST00003", childId);
+            }
+            else if(i==2||i==3){
+                busStopChildProvider.AddToBusStopChild(bSCId,"ST00004", childId);
+            }
         }
 
     }

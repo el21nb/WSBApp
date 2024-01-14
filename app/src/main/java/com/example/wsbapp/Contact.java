@@ -4,6 +4,9 @@ public class Contact {
     private String name;
     private String contactDetail;
 
+    public Contact() {
+    }
+
     public Contact(String name, String contactDetail) {
         this.name = name;
         this.contactDetail = contactDetail;

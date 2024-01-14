@@ -4,6 +4,9 @@ public class JacketChild {
 private String jacketId;
 private String childId;
 
+    public JacketChild() {
+    }
+
     public String getJacketId() {
         return jacketId;
     }

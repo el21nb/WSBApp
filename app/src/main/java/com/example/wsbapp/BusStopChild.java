@@ -6,7 +6,8 @@ public class BusStopChild {
     private String busStopId;
     private String childId;
 
-
+    public BusStopChild() {
+    }
 
     public String getBusStopId() {
         return busStopId;

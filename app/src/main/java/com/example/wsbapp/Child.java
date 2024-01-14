@@ -45,4 +45,7 @@ public class Child {
     public void setChildContacts(List<Contact> childContacts) {
         this.childContacts = childContacts;
     }
+
+
+
 }

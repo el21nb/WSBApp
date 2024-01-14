@@ -5,6 +5,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -17,14 +19,40 @@ public class ChildProvider {
 
     public ChildProvider() {
     }
+        public void fetchChild(String childId, final ChildFetchListener listener) {
+            DocumentReference docRef = db.collection("Children").document(childId);
 
-    public void addChild(String firstName, String lastName, String contact, String contactDetail) {
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        Child child = documentSnapshot.toObject(Child.class);
+                        listener.onChildFetched(child);
+                        Log.d("FC", "DocumentSnapshot data: " + documentSnapshot.getData());
+                    } else {
+                        Log.d("FC", "No such document");
+                        listener.onChildFetched(null); // or handle this case accordingly
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("FC", "get failed with ", e);
+                    listener.onFetchFailed(e);
+                }
+            });
+        }
+    public interface ChildFetchListener {
+        void onChildFetched(Child child);
+        void onFetchFailed(Exception e);
+    }
+    public void addChild(String cHid, String firstName, String lastName, String contact, String contactDetail) {
         Child child = new Child(firstName, lastName);
         List<Contact> childContacts = new ArrayList<>();
         childContacts.add(new Contact(contact, contactDetail));
         child.setChildContacts(childContacts);
 
-        db.collection("Children").document()
+        db.collection("Children").document(cHid)
                 .set(child)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

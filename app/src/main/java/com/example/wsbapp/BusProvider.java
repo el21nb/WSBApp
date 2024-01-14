@@ -21,11 +21,11 @@ public class BusProvider {
     public BusProvider() {
     }
 
-    public void addBusStop(String name, String address)
+    public void addBusStop(String stpId, String name, String address)
     {
         BusStop stopper = new BusStop(name, address);
         Log.w("DataAdding", "*************** addbustrop 1");
-        db.collection("BusStop").document(name)
+        db.collection("BusStop").document(stpId)
                 .set(stopper)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

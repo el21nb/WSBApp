@@ -30,19 +30,22 @@ public class BusStopsActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
 
     private List<String> dataList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus_stops);
         listView = findViewById(R.id.busStopList); // Replace with your actual ListView ID
         dataList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
 
-        readBusStopsData();        readBusStopsData();
+        readBusStopsData();
     }
+
     public void readBusStopsData() {
         BusStopChildProvider provider = new BusStopChildProvider();
+
         Log.d("RBSD", "***1 ");
 
         db.collection("BusStop")
@@ -68,18 +71,24 @@ public class BusStopsActivity extends AppCompatActivity {
                                         provider.fetchChildrenForBusStop(busStopDocument, busStopChildList, new BusStopChildProvider.OnChildrenDataLoadedListener() {
                                             @Override
                                             public void onDataLoaded(List<Child> childrenList) {
+                                                Log.d("RBSD", "***5.5 ");
+
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        Log.d("RBSD", "***5.7 ");
+                                                        String listItem;
                                                         // Add bus stop name
                                                         String busStopName = busStopDocument.getString("name");
-                                                        dataList.add("Bus Stop: " + busStopName);
-
-                                                        // Add each child to the list
+                                                        //dataList.add("Bus Stop: " + busStopName);
+                                                        listItem = "Bus Stop: " + busStopName;
+                                                        // Add each child to the list along with the bus stop name
                                                         for (Child child : childrenList) {
-                                                            dataList.add("  Child: " + child.getFirstName());
+                                                            //dataList.add("  Child: " + child.getFirstName() + " (at Bus Stop: " + busStopName + ")");
+                                                            Log.d("RBSD", "***7 " + child.getFirstName());
+                                                            listItem += "\n" +child.getFirstName();
                                                         }
-
+                                                        dataList.add(listItem);
                                                         // Notify the adapter that the data has changed
                                                         adapter.notifyDataSetChanged();
                                                     }
@@ -95,7 +104,81 @@ public class BusStopsActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_bus_stops);
+//        listView = findViewById(R.id.busStopList); // Replace with your actual ListView ID
+//        dataList = new ArrayList<>();
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+//        listView.setAdapter(adapter);
+//
+//        readBusStopsData();        readBusStopsData();
+//    }
+//    public void readBusStopsData() {
+//        BusStopChildProvider provider = new BusStopChildProvider();
+//        Log.d("RBSD", "***1 ");
+//
+//        db.collection("BusStop")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        Log.d("RBSD", "***2 ");
+//
+//                        if (task.isSuccessful()) {
+//                            Log.d("RBSD", "***3 ");
+//
+//                            for (QueryDocumentSnapshot busStopDocument : task.getResult()) {
+//                                Log.d("RBSD", "***4 ");
+//
+//                                String busStopId = busStopDocument.getId();
+//
+//                                provider.fetchBusStopChildData(busStopId, new BusStopChildProvider.OnBusStopChildDataLoadedListener() {
+//                                    @Override
+//                                    public void onDataLoaded(List<BusStopChild> busStopChildList) {
+//                                        Log.d("RBSD", "***5 ");
+//
+//                                        provider.fetchChildrenForBusStop(busStopDocument, busStopChildList, new BusStopChildProvider.OnChildrenDataLoadedListener() {
+//                                            @Override
+//                                            public void onDataLoaded(List<Child> childrenList) {
+//                                                Log.d("RBSD", "***5.5 ");
+//
+//                                                runOnUiThread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        Log.d("RBSD", "***5.7 ");
+//
+//                                                        // Add bus stop name
+//                                                        String busStopName = busStopDocument.getString("name");
+//                                                        dataList.add("Bus Stop: " + busStopName);
+//                                                        Log.d("RBSD", "***6 " + busStopName);
+//
+//                                                        // Add each child to the list
+//                                                        for (Child child : childrenList) {
+//                                                            dataList.add("  Child: " + child.getFirstName());
+//                                                            Log.d("RBSD", "***7 "+ child.getFirstName());
+//
+//                                                        }
+//
+//                                                        // Notify the adapter that the data has changed
+//                                                        adapter.notifyDataSetChanged();
+//                                                    }
+//                                                });
+//                                            }
+//                                        });
+//                                    }
+//                                });
+//                            }
+//                        } else {
+//                            Log.d("RBSD", "Error getting documents: ", task.getException());
+//                        }
+//                    }
+//                });
+//    }
+//}
 //    public void readBusStopsData() {
 //        BusStopChildProvider provider = new BusStopChildProvider(); // Create an instance outside the loop
 //        Log.d("RBSD", "***1 ");

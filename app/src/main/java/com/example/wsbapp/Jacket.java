@@ -1,6 +1,9 @@
 package com.example.wsbapp;
 
 public class Jacket {
+    public Jacket() {
+    }
+
     private String identifier;
 
     public String getIdentifier() {

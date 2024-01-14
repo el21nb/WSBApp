@@ -94,28 +94,6 @@ public class BusStopChildProvider {
 
 
     public void fetchBusStopChildData(String busStopId, OnBusStopChildDataLoadedListener listener) {
-       // Log.d("RBSD", "In fetchBusStopChildData " + busStopId);
-
-//        db.collection("BusStopChild")
-//                .whereEqualTo("busStopId","trtMNygkl5DX05kgH44s")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            Log.d("RBSD", "if success");
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d("RBSD", "in for");
-//                                if (document != null) {
-//                                    Log.d("RBSD", document.getId() + " => " + document.getData());
-//                                }
-//                            }
-//                        } else {
-//                            Log.d("RSBD", "Error getting documents: ", task.getException());
-//                        }
-//                    }
-//                });
-
         db.collection("BusStopChild")
                 .whereEqualTo("busStopId", busStopId)
                 .get()
@@ -159,10 +137,13 @@ public class BusStopChildProvider {
 
         List<String> childIds = new ArrayList<>();
         Log.d("RBSD","busStopChildList size = " + busStopChildList.size());
+
+
         for (BusStopChild busStopChild : busStopChildList) {
             childIds.add(busStopChild.getChildId());
             Log.d("RBSD", "child id = " + busStopChild.getChildId());
         }
+        Log.d("RBSD", "childIds.size() = " + childIds.size() );
 
         db.collection("Children")
                 .whereIn(FieldPath.documentId(), childIds)
@@ -171,6 +152,7 @@ public class BusStopChildProvider {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            try {
                             List<Child> childrenList = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 if(document!=null) {
@@ -180,7 +162,10 @@ public class BusStopChildProvider {
                                 }
                             }
                             listener.onDataLoaded(childrenList);
-                        } else {
+                        } catch (Exception e) {
+                                Log.d("RBSD", "FBSCD catch 23- " + e.getMessage());
+                            }
+                        }else {
                             Log.d("RC2", "Error getting documents: ", task.getException());
                             listener.onDataLoaded(null);
                         }
